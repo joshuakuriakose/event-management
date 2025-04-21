@@ -5,7 +5,7 @@ $password = "root";               // Use your MySQL password
 $database = "event management";
 
 
-$conn = new mysqli($servername, $username, $password, $dbname, $port);
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 
 if ($conn->connect_error) {
