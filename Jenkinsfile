@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_HOST = 'tcp://host.docker.internal:2375' // Connect to Docker Desktop daemon
+        DOCKER_HOST = 'tcp://host.docker.internal:2375'
     }
     stages {
         stage('Clone') {
@@ -22,15 +22,13 @@ pipeline {
             }
         }
 
-      stage('Test') {
-    steps {
-        sh '''
-            docker build -f Dockerfile.selenium -t selenium-runner .
-            docker run --rm selenium-runner
-        '''
-    }
-}
-
-
+        stage('Test') {
+            steps {
+                sh '''
+                    docker build -f Dockerfile.selenium -t selenium-runner .
+                    docker run --rm selenium-runner
+                '''
+            }
+        }
     }
 }
