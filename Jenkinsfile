@@ -1,74 +1,36 @@
 pipeline {
     agent any
-
     environment {
-        XAMPP_PATH = "C:\\xampp"
-        DEPLOY_PATH = "\"${XAMPP_PATH}\\htdocs\\EventManagement\""
-        PHP_PATH = "C:\\xampp\\php\\php.exe"
-        APACHE_START = "\"${XAMPP_PATH}\\apache\\bin\\httpd.exe\""
-        APACHE_STOP = "\"${XAMPP_PATH}\\apache\\bin\\httpd.exe\" -k shutdown"
+        DOCKER_HOST = 'tcp://host.docker.internal:2375' // Connect to Docker Desktop daemon
     }
-
     stages {
-        stage('Stop Apache Server') {
+        stage('Clone') {
             steps {
-                echo '🛑 Stopping Apache server...'
-                bat '"%APACHE_STOP%"'
+                git branch: 'main', url: 'https://github.com/joshuakuriakose/event-management.git'
             }
         }
 
-        stage('Start Apache Server') {
+        stage('Build Image') {
             steps {
-                echo '🚀 Starting Apache server...'
-                bat '"%APACHE_START%"'
+                sh 'docker build -t event-management-app .'
             }
         }
 
-        stage('Checkout Code') {
+        stage('Run Container') {
             steps {
-                echo '📦 Cloning repository...'
-                checkout scm
+                sh 'docker-compose -f docker-compose.yml up -d --build'
             }
         }
 
-        stage('PHP Lint Check') {
-            steps {
-                echo '🔍 Running PHP lint check...'
-                bat '''
-                set PHP_PATH=%PHP_PATH%
-                for /R %%f in (*.php) do (
-                    echo Checking %%f...
-                    "%PHP_PATH%" -l "%%f" || exit /b 1
-                )
-                '''
-            }
-        }
-
-        stage('Deploy to XAMPP') {
-            steps {
-                echo '🚚 Deploying to XAMPP htdocs...'
-                bat '''
-                if exist "%DEPLOY_PATH%" rmdir /s /q "%DEPLOY_PATH%"
-                mkdir "%DEPLOY_PATH%"
-                xcopy /E /I /Y "Event management project\\*" "%DEPLOY_PATH%"
-                '''
-            }
-        }
-
-        stage('Open in Browser') {
-            steps {
-                echo '🌐 Opening project in browser...'
-                bat 'start "" "http://localhost/EventManagement/login.php"'
-            }
-        }
+      stage('Test') {
+    steps {
+        sh '''
+            docker build -f Dockerfile.selenium -t selenium-runner .
+            docker run --rm selenium-runner
+        '''
     }
+}
 
-    post {
-        failure {
-            echo '❌ Build failed!'
-        }
-        success {
-            echo '✅ Build completed successfully!'
-        }
+
     }
 }
