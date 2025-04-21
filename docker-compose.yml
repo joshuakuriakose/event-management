@@ -1,19 +1,13 @@
 version: '3.8'
 services:
-  cms:
+  evt:
     build: .
     ports:
       - "8085:80"
     networks:
-      - event-net
-  db:
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: event management
-    networks:
-      - event-net
-
+      -  event-net
+   
 networks:
-  event-net:
-    driver: bridge
+   event-net:
+    external: true
+    
