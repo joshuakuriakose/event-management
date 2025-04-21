@@ -6,12 +6,12 @@ $username = "root";
 $password = "root";          // Use your MySQL password
 $database = "event management"; 
 
-// Try connecting to the database using PDO
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+// Create a connection using mysqli
+$conn = new mysqli($servername, $username, $password, $database);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
 // Check if the form was submitted
@@ -38,18 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Insert event into the database
-    $query = "INSERT INTO events (user_id, event_type, event_date, guest_count, budget) 
-              VALUES (:user_id, :event_type, :event_date, :guest_count, :budget)";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':user_id', $user_id);
-    $stmt->bindParam(':event_type', $event_type);
-    $stmt->bindParam(':event_date', $event_date);
-    $stmt->bindParam(':guest_count', $guest_count);
-    $stmt->bindParam(':budget', $budget);
+    $stmt = $conn->prepare("INSERT INTO events (user_id, event_type, event_date, guest_count, budget) 
+                            VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("isssi", $user_id, $event_type, $event_date, $guest_count, $budget); // "isssi" indicates string, string, string, integer, integer
 
     try {
         $stmt->execute();
-        $event_id = $pdo->lastInsertId(); // Get the last inserted event ID
+        $event_id = $stmt->insert_id; // Get the last inserted event ID
 
         // Store the latest event ID in session
         $_SESSION['selected_event_id'] = $event_id;
@@ -57,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Event saved successfully!";
         header("Location: bookings.php"); // Redirect to bookings page
         exit;  
-    } catch (PDOException $e) {
+    } catch (Exception $e) {
         die("Error saving event: " . $e->getMessage());
     }
 }
