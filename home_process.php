@@ -3,11 +3,12 @@ session_start();  // Start session
 
 $servername = "my-mysql";    // Ensure this matches your Docker Compose service name
 $username = "root";
-$password = "root";               // Use your MySQL password
+$password = "root";          // Use your MySQL password
 $database = "event management"; 
 
+// Try connecting to the database using PDO
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$database", $username, $password);
+    $pdo = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
