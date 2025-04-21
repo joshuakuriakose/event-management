@@ -10,7 +10,7 @@ services:
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: eventdb
+      MYSQL_DATABASE: event management
     networks:
       - event-net
 
