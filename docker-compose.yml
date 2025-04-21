@@ -6,6 +6,13 @@ services:
       - "8085:80"
     networks:
       - event-net
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: eventdb
+    networks:
+      - event-net
 
 networks:
   event-net:
