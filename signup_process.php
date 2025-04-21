@@ -2,14 +2,13 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$servername = "localhost"; 
+$servername = "my-mysql";    // Ensure this matches your Docker Compose service name
 $username = "root";
-$password = "root";
-$dbname = "event management";
-$port = 3307; 
+$password = "root";               // Use your MySQL password
+$database = "event management";        
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname, $port);
+$conn = new mysqli($servername, $username, $password, $database);
 
 // Check connection
 if ($conn->connect_error) {
