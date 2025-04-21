@@ -16,11 +16,6 @@ if ($conn->connect_error) {
 
 // Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Debugging: Check form submission
-    echo "<pre>";
-    print_r($_POST);
-    echo "</pre>";
-
     // Validate session user_id
     if (!isset($_SESSION['user_id'])) {
         die("Error: User is not logged in.");
@@ -49,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Store the latest event ID in session
         $_SESSION['selected_event_id'] = $event_id;
 
-        echo "Event saved successfully!";
+        // Redirect after saving the event
         header("Location: bookings.php"); // Redirect to bookings page
         exit;  
     } catch (Exception $e) {
