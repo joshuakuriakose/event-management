@@ -16,13 +16,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status = "Booked";
     $created_at = date('Y-m-d H:i:s');
 
-    // Debugging Output
-    echo "Debugging Output:<br>";
-    echo "Event ID: $event_id <br>";
-    echo "User ID: $user_id <br>";
-    echo "Payment Method: $payment_method <br>";
-    echo "UPI ID: $upi_id <br>";
-    echo "Payment Status: $payment_status <br>";
+    // Debugging: Log the output to a file instead of echoing
+    file_put_contents('debug_log.txt', "Debugging Output:\n", FILE_APPEND);
+    file_put_contents('debug_log.txt', "Event ID: $event_id\n", FILE_APPEND);
+    file_put_contents('debug_log.txt', "User ID: $user_id\n", FILE_APPEND);
+    file_put_contents('debug_log.txt', "Payment Method: $payment_method\n", FILE_APPEND);
+    file_put_contents('debug_log.txt', "UPI ID: $upi_id\n", FILE_APPEND);
+    file_put_contents('debug_log.txt', "Payment Status: $payment_status\n", FILE_APPEND);
 
     // Check if event exists for this user
     $check_event = $conn->prepare("SELECT event_id FROM events WHERE event_id = ? AND user_id = ?");
